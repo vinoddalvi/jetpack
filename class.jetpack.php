@@ -488,6 +488,10 @@ class Jetpack {
 			add_action( 'template_redirect', array( $this, 'alternate_xmlrpc' ) );
 		}
 
+		// define a few REST endpoints for getting through the connection process
+		// without XMLRPC
+		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
+
 		if ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST && isset( $_GET['for'] ) && 'jetpack' == $_GET['for'] ) {
 			@ini_set( 'display_errors', false ); // Display errors can cause the XML to be not well formed.
 
@@ -608,6 +612,7 @@ class Jetpack {
 		}
 	}
 
+<<<<<<< HEAD
 	/**
 	 * Since a lot of hosts use a hammer approach to "protecting" WordPress sites,
 	 * and just blanket block all requests to /xmlrpc.php, or apply other overly-sensitive
@@ -655,6 +660,19 @@ class Jetpack {
 		$wp_xmlrpc_server->serve_request();
 
 		exit;
+=======
+	function rest_api_init() {
+		register_rest_route( 'jetpack/v1', '/verify_registration', array(
+			'methods' => 'POST',
+			'callback' => array( $this, 'rest_verify_registration' ),
+		) );
+	}
+
+	function rest_verify_registration( $request ) {
+		require_once JETPACK__PLUGIN_DIR . 'class.jetpack-xmlrpc-server.php';
+		$xmlrpc_server = new Jetpack_XMLRPC_Server();
+		return $xmlrpc_server->verify_registration( array( $request['secret_1'], $request['state'] ) );
+>>>>>>> add/alternative-xmlrpc-transport
 	}
 
 	function jetpack_admin_ajax_tracks_callback() {
