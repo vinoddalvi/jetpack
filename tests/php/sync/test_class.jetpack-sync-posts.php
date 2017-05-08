@@ -960,6 +960,44 @@ That was a cool video.';
 		$this->assertEquals( $events[3]->action, 'jetpack_published_post' );
 	}
 
+	function test_import_done_action_syncs_jetpack_sync_import_end() {
+		do_action( 'import_done', 'test' );
+		$this->sender->do_sync();
+
+		$event = $this->server_event_storage->get_most_recent_event( 'jetpack_sync_import_end' );
+		$this->assertTrue( (bool) $event );
+		$this->assertEquals( 'test', $event->args[0] );
+	}
+
+	function test_import_end_action_syncs_jetpack_sync_import_end() {
+		do_action( 'import_end' );
+		$this->sender->do_sync();
+
+		$event = $this->server_event_storage->get_most_recent_event( 'jetpack_sync_import_end' );
+		$this->assertTrue( (bool) $event );
+		$this->assertEquals( 'unknown', $event->args[0] );
+	}
+
+	function test_import_end_and_import_done_action_syncs_jetpack_sync_import_end() {
+		do_action( 'import_end' );
+		do_action( 'import_done', 'test' );
+		$this->sender->do_sync();
+
+		$event = $this->server_event_storage->get_most_recent_event( 'jetpack_sync_import_end' );
+		$this->assertTrue( (bool) $event );
+		$this->assertEquals( 'unknown', $event->args[0] );
+	}
+
+	function test_import_dene_and_import_end_action_syncs_jetpack_sync_import_end() {
+		do_action( 'import_done', 'test' );
+		do_action( 'import_end' );
+		$this->sender->do_sync();
+
+		$event = $this->server_event_storage->get_most_recent_event( 'jetpack_sync_import_end' );
+		$this->assertTrue( (bool) $event );
+		$this->assertEquals( 'test', $event->args[0] );
+	}
+
 	function add_a_hello_post_type() {
 		if ( ! $this->test_already  ) {
 			$this->test_already = true;
