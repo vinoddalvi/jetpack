@@ -175,4 +175,17 @@ abstract class Jetpack_JSON_API_Themes_Endpoint extends Jetpack_JSON_API_Endpoin
 		return array_map( array( $this, 'format_theme' ), $themes );
 	}
 
+	/**
+	 * Checks if theme came from wpcom repository.
+	 *
+	 * @since 5.0
+	 *
+	 * @param string $theme Template directory.
+	 *
+	 * @return bool
+	 */
+	protected function is_wpcom_theme( $theme = '' ) {
+		return false !== stripos( $theme, '-wpcom' );
+	}
+
 }
